@@ -515,3 +515,9 @@ Gravando*
 *.mov
 *.mkv
 *.webm
+
+# ======================================================================
+# ACRESCENTADO (auditoria): dados locais da API
+# ======================================================================
+# Pasta do banco SQLite local (nada dentro dela deve ser versionado)
+data/

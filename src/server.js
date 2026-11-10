@@ -1,12 +1,12 @@
 const app = require('./app');
-const { port } = require('./config');
+const { port, host } = require('./config');
 const { getDb, closeDb } = require('./db/connection');
 
 getDb(); // cria o banco e as tabelas na inicialização
 
-const server = app.listen(port, () => {
-  console.log(`API de Hábitos rodando em http://localhost:${port}`);
-  console.log(`Documentação em http://localhost:${port}/docs`);
+const server = app.listen(port, host, () => {
+  console.log(`API de Hábitos rodando em http://${host}:${port}`);
+  console.log(`Documentação em http://${host}:${port}/docs`);
   console.log('Pressione Ctrl+C para encerrar e fechar a porta.');
 });
 

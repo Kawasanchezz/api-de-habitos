@@ -1,6 +1,11 @@
 const { getDb, closeDb } = require('./connection');
 const { addDays, today } = require('../utils/dates');
 
+if (process.env.NODE_ENV === 'production') {
+  console.error('Seed recusado: ele apaga todos os dados e não roda com NODE_ENV=production.');
+  process.exit(1);
+}
+
 const db = getDb();
 db.exec('DELETE FROM habit_logs; DELETE FROM habits;');
 

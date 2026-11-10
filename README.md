@@ -25,7 +25,9 @@ As tabelas são criadas automaticamente na inicialização.
 | Variável  | Padrão              | Descrição                                      |
 |-----------|---------------------|------------------------------------------------|
 | `PORT`    | `3000`              | Porta HTTP                                     |
+| `HOST`    | `127.0.0.1`         | Interface de rede (`0.0.0.0` expõe na rede)    |
 | `DB_PATH` | `./data/habits.db`  | Arquivo SQLite (`:memory:` para banco em memória) |
+| `RATE_LIMIT_MAX` | `300`        | Máximo de requisições por IP por minuto        |
 
 ## Rotas
 
@@ -79,6 +81,10 @@ curl localhost:3000/habits/1/stats
 ## Postman
 
 Importe [postman_collection.json](postman_collection.json). A variável `baseUrl` aponta para `http://localhost:3000` e `habitId` define o hábito usado nas requisições.
+
+## Segurança
+
+Veja [SECURITY.md](SECURITY.md) para controles, limitações (a API **não tem autenticação**) e como reportar vulnerabilidades.
 
 ## Estrutura
 

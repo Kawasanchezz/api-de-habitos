@@ -132,3 +132,51 @@ describe('estatísticas', () => {
 test('GET /health', async () => {
   expect((await request(app).get('/health')).body.status).toBe('ok');
 });
+
+describe('endurecimento de segurança', () => {
+  test('ids não canônicos são rejeitados', async () => {
+    const { body: habit } = await createHabit();
+    for (const bad of ['1e0', '0x1', '1.0', '%201', '0', '-1', '99999999999999999999']) {
+      expect((await request(app).get(`/habits/${bad}`)).status).toBe(400);
+    }
+    expect((await request(app).get(`/habits/${habit.id}`)).status).toBe(200);
+  });
+
+  test('corpo acima do limite retorna 413 em JSON (não 500)', async () => {
+    const res = await request(app).post('/habits').send({ name: 'abc', description: 'x'.repeat(20000) });
+    expect(res.status).toBe(413);
+    expect(res.body.error.code).toBe('PAYLOAD_TOO_LARGE');
+  });
+
+  test('envia cabeçalhos de segurança e oculta X-Powered-By', async () => {
+    const res = await request(app).get('/health');
+    expect(res.headers['x-powered-by']).toBeUndefined();
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+    expect(res.headers['x-frame-options']).toBe('DENY');
+    expect(res.headers['content-security-policy']).toContain("default-src 'none'");
+  });
+
+  test('limitador de requisições responde 429', async () => {
+    const express = require('express');
+    const { createRateLimiter } = require('../src/middlewares/security');
+    const mini = express();
+    mini.use(createRateLimiter({ windowMs: 60000, max: 2 }));
+    mini.get('/', (_req, res) => res.json({}));
+    expect((await request(mini).get('/')).status).toBe(200);
+    expect((await request(mini).get('/')).status).toBe(200);
+    const blocked = await request(mini).get('/');
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.error.code).toBe('RATE_LIMITED');
+  });
+});
+
+describe('estatísticas semanais', () => {
+  test('streak conta semanas consecutivas, não dias', async () => {
+    const { body: habit } = await createHabit({ name: 'Treino semanal', frequency: 'weekly' });
+    for (const offset of [0, 7, 14, 28]) {
+      await request(app).post(`/habits/${habit.id}/check`).send({ date: addDays(today(), -offset) });
+    }
+    const res = await request(app).get(`/habits/${habit.id}/stats`);
+    expect(res.body).toMatchObject({ total_completions: 4, current_streak: 3, longest_streak: 3 });
+  });
+});
