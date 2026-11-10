@@ -1,0 +1,6 @@
+require('dotenv').config({ quiet: true });
+
+module.exports = {
+  port: Number(process.env.PORT) || 3000,
+  dbPath: process.env.DB_PATH || './data/habits.db',
+};
