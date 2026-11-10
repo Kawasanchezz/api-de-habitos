@@ -21,7 +21,11 @@ const dateString = z
   .refine(isValidDate, 'Data inválida; use o formato YYYY-MM-DD');
 const pastOrToday = dateString.refine((d) => d <= today(), 'A data não pode estar no futuro');
 
-const id = z.coerce.number().int().positive();
+// Apenas dígitos decimais: rejeita formas como "1e0", "0x1", "1.0" ou " 1".
+const id = z
+  .string()
+  .regex(/^[1-9]\d{0,14}$/, 'Id deve ser um inteiro positivo')
+  .transform(Number);
 
 const habitCreate = z.object({
   name: z.string().trim().min(3).max(100),
