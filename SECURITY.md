@@ -28,7 +28,7 @@ Não abra uma issue pública. Use o **GitHub Private Vulnerability Reporting** (
 - **Rate limit por IP em memória:** não é compartilhado entre processos e, atrás de proxy reverso, exige configurar `trust proxy`.
 - **Swagger UI em `/docs`** fica habilitado sempre e é servido sem CSP (a interface exige scripts inline).
 - **Dados em texto livre** (`name`, `description`, `note`) são armazenados como recebidos. A API só responde JSON, mas clientes que os exibam como HTML devem escapá-los.
-- **Dependências de desenvolvimento:** `npm audit` ainda reporta 5 avisos de severidade baixa na cadeia do `jest`, causados por `deepmerge` (prototype poisoning em `mergeObject`), que não tem versão corrigida publicada. Só afetam a execução dos testes, não o código de produção (`npm audit --omit=dev` retorna 0). As falhas de `minimatch` e `glob` foram corrigidas via `overrides` no `package.json`.
+- **Dependências de desenvolvimento:** `npm audit` retorna 0 vulnerabilidades. Os testes usam o executor nativo do Node (`node --test`) em vez do jest, o que removeu a cadeia vulnerável (`deepmerge`, `glob`). Uma falha de `minimatch` no `nodemon` é contornada com `overrides` no `package.json`.
 - Sem HTTPS próprio: use um proxy reverso com TLS se for publicar.
 
 ## Boas práticas ao contribuir

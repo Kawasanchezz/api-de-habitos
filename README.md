@@ -2,7 +2,7 @@
 
 API REST simples para cadastrar hábitos, registrar progresso diário e consultar estatísticas (total, sequências e taxa de conclusão).
 
-**Stack:** Node.js · Express · SQLite (`better-sqlite3`) · Zod · Swagger (OpenAPI 3) · Jest + Supertest
+**Stack:** Node.js · Express · SQLite (`better-sqlite3`) · Zod · Swagger (OpenAPI 3) · `node:test` + Supertest
 
 ## Como rodar
 
